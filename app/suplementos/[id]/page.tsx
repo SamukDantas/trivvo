@@ -26,8 +26,8 @@ export default async function PaginaSuplemento({ params }: Props) {
       .limit(5),
   ]);
 
-  const ingredientes: { nome: string; quantidade?: string }[] = suplemento.ingredientes || [];
-  const certificacoes: string[] = suplemento.certificacoes || [];
+  const ingredientes: string[] = detalhes?.ingredientes || [];
+  const certificacoes: string[] = detalhes?.certificacoes || [];
 
   const CORES_CERT: Record<string, string> = {
     ANVISA: 'bg-blue-100 text-blue-700',
@@ -68,17 +68,17 @@ export default async function PaginaSuplemento({ params }: Props) {
             </span>
             <h1 className="mt-1 text-xl font-bold text-zinc-900">{suplemento.nome}</h1>
 
-            {suplemento.preco_minimo != null && (
+            {precos && precos.length > 0 && (
               <p className="mt-2 text-2xl font-bold text-emerald-600">
-                R$ {Number(suplemento.preco_minimo).toFixed(2).replace('.', ',')}
+                R$ {Number(precos[0].preco).toFixed(2).replace('.', ',')}
               </p>
             )}
 
             {detalhes && (
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-zinc-600">
-                {detalhes.porcao && (
+                {detalhes.dose_porcao && (
                   <span>
-                    <strong>Porção:</strong> {detalhes.porcao}
+                    <strong>Porção:</strong> {detalhes.dose_porcao}
                   </span>
                 )}
                 {detalhes.porcoes_por_embalagem && (
@@ -93,11 +93,10 @@ export default async function PaginaSuplemento({ params }: Props) {
               <div className="mt-6">
                 <h2 className="font-semibold text-zinc-900 mb-2">Ingredientes</h2>
                 <ul className="space-y-1.5 text-sm text-zinc-600">
-                  {ingredientes.map((ing: { nome: string; quantidade?: string }) => (
-                    <li key={ing.nome} className="flex items-center gap-2">
+                  {ingredientes.map((ing) => (
+                    <li key={ing} className="flex items-center gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 flex-shrink-0" />
-                      {ing.nome}
-                      {ing.quantidade && <span className="text-zinc-400">— {ing.quantidade}</span>}
+                      {ing}
                     </li>
                   ))}
                 </ul>
@@ -134,14 +133,14 @@ export default async function PaginaSuplemento({ params }: Props) {
                 </h2>
                 <ul className="space-y-1.5 text-sm text-zinc-600">
                   {precos.map(
-                    (p: { id: number; preco: number; data_coleta: string; local?: string }) => (
+                    (p: { id: number; preco: number; data_coleta: string; loja_nome?: string }) => (
                       <li
                         key={p.id}
                         className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2"
                       >
                         <span>
                           R$ {Number(p.preco).toFixed(2).replace('.', ',')}
-                          {p.local ? ` — ${p.local}` : ''}
+                          {p.loja_nome ? ` — ${p.loja_nome}` : ''}
                         </span>
                         <span className="text-zinc-400 text-xs">
                           {new Date(p.data_coleta).toLocaleDateString('pt-BR')}
