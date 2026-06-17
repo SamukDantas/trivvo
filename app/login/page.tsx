@@ -34,12 +34,9 @@ export default function PaginaLogin() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <div className="flex flex-1 items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-bold text-emerald-600">
-            Trivvo
-          </Link>
           <p className="mt-2 text-sm text-zinc-500">
             Entre para receber recomendações personalizadas
           </p>

@@ -3,18 +3,6 @@ import Link from 'next/link';
 export default function PaginaInicial() {
   return (
     <div className="flex flex-col flex-1">
-      <header className="border-b border-zinc-200 bg-white">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="font-bold text-xl text-emerald-600">Trivvo</span>
-          <Link
-            href="/login"
-            className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
-          >
-            Entrar
-          </Link>
-        </div>
-      </header>
-
       <main className="flex-1 flex flex-col items-center justify-center px-6 text-center">
         <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl">
           Escolha os melhores suplementos com base em{' '}
