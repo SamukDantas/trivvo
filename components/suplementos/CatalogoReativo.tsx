@@ -99,15 +99,6 @@ export default function CatalogoReativo({
   const indiceInicio = (paginaAtual - 1) * ITENS_POR_PAGINA;
   const resultado = resultadoCompleto.slice(indiceInicio, indiceInicio + ITENS_POR_PAGINA);
 
-  if (resultadoCompleto.length === 0 && !carregando) {
-    return (
-      <EstadoVazio
-        titulo="Nenhum suplemento encontrado"
-        descricao="Tente ajustar sua busca ou limpar os filtros."
-      />
-    );
-  }
-
   const paginasVisiveis = gerarPaginasVisiveis(paginaAtual, totalPaginas);
 
   return (
@@ -127,7 +118,7 @@ export default function CatalogoReativo({
             ? ` em ${categorias.find((c) => String(c.id) === categoriaInicial)!.nome}`
             : ''}
         </span>
-        {totalPaginas > 1 && (
+        {totalPaginas > 1 && resultadoCompleto.length > 0 && (
           <span>
             Página {paginaAtual} de {totalPaginas}
           </span>
@@ -171,23 +162,30 @@ export default function CatalogoReativo({
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {resultado.map((s) => (
-          <CardSuplemento
-            key={s.id}
-            suplemento={{
-              id: s.id,
-              nome: s.nome,
-              marca: s.marca,
-              imagem_url: s.imagem_url || undefined,
-              preco_minimo: s.precos_suplementos?.[0]?.preco ?? undefined,
-              certificacoes: s.detalhes_suplementos?.[0]?.certificacoes || undefined,
-            }}
-          />
-        ))}
-      </div>
+      {resultadoCompleto.length === 0 ? (
+        <EstadoVazio
+          titulo="Nenhum suplemento encontrado"
+          descricao="Tente ajustar sua busca ou selecionar outro filtro."
+        />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {resultado.map((s) => (
+            <CardSuplemento
+              key={s.id}
+              suplemento={{
+                id: s.id,
+                nome: s.nome,
+                marca: s.marca,
+                imagem_url: s.imagem_url || undefined,
+                preco_minimo: s.precos_suplementos?.[0]?.preco ?? undefined,
+                certificacoes: s.detalhes_suplementos?.[0]?.certificacoes || undefined,
+              }}
+            />
+          ))}
+        </div>
+      )}
 
-      {totalPaginas > 1 && (
+      {totalPaginas > 1 && resultadoCompleto.length > 0 && (
         <div className="mt-8 flex items-center justify-center gap-1">
           <button
             onClick={() => setPagina(paginaAtual - 1)}
