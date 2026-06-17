@@ -62,6 +62,9 @@ const MARCAS_CONHECIDAS: Record<string, string> = {
   'mais mu': 'Mais Mu',
   maismu: 'Mais Mu',
   foods: 'Foods Nutrition',
+  bigens: 'Bigens',
+  'dark lab': 'Dark Lab',
+  darklab: 'Dark Lab',
 };
 
 export function extrairMarca(titulo: string): string {
