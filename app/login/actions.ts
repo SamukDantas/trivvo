@@ -1,7 +1,6 @@
 'use server';
 
 import { createClient } from '@supabase/supabase-js';
-import { headers } from 'next/headers';
 
 function criarClienteAcao() {
   return createClient(
@@ -9,6 +8,8 @@ function criarClienteAcao() {
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!
   );
 }
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://trivvo-gamma.vercel.app';
 
 export async function loginComMagicLink(formData: FormData) {
   const email = formData.get('email') as string;
@@ -21,7 +22,7 @@ export async function loginComMagicLink(formData: FormData) {
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+      emailRedirectTo: `${SITE_URL}/auth/callback`,
     },
   });
 
@@ -37,7 +38,7 @@ export async function loginComGoogle() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/auth/callback`,
+      redirectTo: `${SITE_URL}/auth/callback`,
     },
   });
 
