@@ -38,7 +38,7 @@ export default function PaginaLogin() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl font-bold text-emerald-600">
-            MVP Suplementos
+            Trivvo
           </Link>
           <p className="mt-2 text-sm text-zinc-500">
             Entre para receber recomendações personalizadas

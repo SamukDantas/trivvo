@@ -2,14 +2,14 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Política de Privacidade — MVP Suplementos',
+  title: 'Política de Privacidade — Trivvo',
 };
 
 const SECOES = [
   {
     titulo: 'Dados Coletados',
     conteudo: [
-      'Ao utilizar a plataforma MVP Suplementos, coletamos os seguintes dados pessoais:',
+      'Ao utilizar a plataforma Trivvo, coletamos os seguintes dados pessoais:',
       'Nome completo, endereço de e-mail e data de nascimento, fornecidos durante o cadastro ou login via Google.',
       'Informações do perfil: objetivo de treino, tipo de dieta, restrições alimentares, nível de experiência com suplementação e faixa de orçamento.',
       'Dados de navegação e interação: páginas visitadas, suplementos visualizados, favoritos e recomendações geradas pela plataforma.',
@@ -104,7 +104,7 @@ export default function PaginaPrivacidade() {
         </div>
 
         <div className="mt-10 pt-6 border-t border-zinc-200 text-center text-xs text-zinc-400">
-          MVP Suplementos — Brasil, 2026. Todos os direitos reservados.
+          Trivvo — Brasil, 2026. Todos os direitos reservados.
         </div>
       </div>
     </div>

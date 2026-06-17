@@ -8,11 +8,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'MVP Suplementos — Escolha os melhores com base em dados',
+  title: 'Trivvo — Escolha os melhores suplementos com base em dados',
   description:
     'Plataforma que compara, recomenda e verifica suplementos com base no seu perfil, objetivos e orçamento.',
   openGraph: {
-    title: 'MVP Suplementos',
+    title: 'Trivvo',
     description: 'Escolha os melhores suplementos do mercado com recomendações personalizadas.',
   },
 };

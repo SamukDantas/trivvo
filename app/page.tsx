@@ -5,7 +5,7 @@ export default function PaginaInicial() {
     <div className="flex flex-col flex-1">
       <header className="border-b border-zinc-200 bg-white">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <span className="font-bold text-xl text-emerald-600">MVP Suplementos</span>
+          <span className="font-bold text-xl text-emerald-600">Trivvo</span>
           <Link
             href="/login"
             className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
@@ -54,7 +54,7 @@ export default function PaginaInicial() {
 
       <footer className="border-t border-zinc-200 bg-white py-6 text-center text-sm text-zinc-500">
         <div className="max-w-5xl mx-auto px-6 flex flex-col gap-2 sm:flex-row sm:justify-between">
-          <span>MVP Suplementos — Brasil, 2026</span>
+          <span>Trivvo — Brasil, 2026</span>
           <Link href="/politica-de-privacidade" className="hover:text-zinc-700 underline">
             Política de Privacidade
           </Link>
