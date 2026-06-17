@@ -36,15 +36,17 @@ interface LinhaSuplemento {
   nome: string;
   marca: string;
   categoria_id: string;
-  categorias_suplementos?: LinhaCategoria | null;
-  precos_suplementos?: { preco: number }[] | null;
-  detalhes_suplementos?: {
-    dose_porcao: number;
-    porcoes_por_embalagem: number;
-    ingredientes: string[];
-    certificacoes: string[];
-    registro_anvisa: string | null;
-  } | null;
+  categorias_suplementos: { id: number; nome: string; slug: string }[] | null;
+  precos_suplementos: { preco: number }[] | null;
+  detalhes_suplementos:
+    | {
+        dose_porcao: number;
+        porcoes_por_embalagem: number;
+        ingredientes: string[];
+        certificacoes: string[];
+        registro_anvisa: string | null;
+      }[]
+    | null;
 }
 
 export interface ResultadoRecomendacao {
@@ -124,7 +126,7 @@ export async function gerarRecomendacoes(perfil: LinhaPerfil): Promise<Resultado
 
   // ── 4. Calcular pontuação de cada suplemento ───────────────────────
   const pontuados = suplementos.map((sup, i) => {
-    const categoriaSlug = sup.categorias_suplementos?.slug ?? '';
+    const categoriaSlug = sup.categorias_suplementos?.[0]?.slug ?? '';
 
     const ptsObjetivo = calcularPontuacaoObjetivo(categoriaSlug, objetivo);
     const ptsCustoBeneficio = calcularPontuacaoCustoBeneficio(
@@ -133,9 +135,11 @@ export async function gerarRecomendacoes(perfil: LinhaPerfil): Promise<Resultado
       maiorCusto,
       perfil.faixa_orcamento as FaixaOrcamento
     );
-    const ptsQualidade = calcularPontuacaoQualidade(sup.detalhes_suplementos?.certificacoes ?? []);
+    const ptsQualidade = calcularPontuacaoQualidade(
+      sup.detalhes_suplementos?.[0]?.certificacoes ?? []
+    );
     const ptsRestricoes = calcularPontuacaoRestricoes(
-      sup.detalhes_suplementos?.ingredientes ?? [],
+      sup.detalhes_suplementos?.[0]?.ingredientes ?? [],
       perfil.restricoes ?? []
     );
     const ptsExperiencia = calcularPontuacaoExperiencia(
@@ -196,7 +200,7 @@ export async function gerarRecomendacoes(perfil: LinhaPerfil): Promise<Resultado
 /** Extrai o custo por dose (R$ / grama de porção) de um suplemento. */
 function extrairCustoPorDose(suplemento: LinhaSuplemento): number | null {
   const precos = suplemento.precos_suplementos;
-  const detalhes = suplemento.detalhes_suplementos;
+  const detalhes = suplemento.detalhes_suplementos?.[0];
 
   if (
     !precos ||
