@@ -91,7 +91,7 @@ async function BuscarRecomendacoes() {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {recomendacoes.map((rec) => (
-        <CardSuplemento key={rec.id} suplemento={adaptarRecomendacao(rec)} />
+        <CardSuplemento key={rec.suplemento_id} suplemento={adaptarRecomendacao(rec)} />
       ))}
     </div>
   );
