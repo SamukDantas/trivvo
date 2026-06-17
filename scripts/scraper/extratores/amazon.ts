@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import type { DadosBrutos } from '../tipos';
 import { normalizarPreco, userAgentAleatorio } from '../utils';
+import { isSuplemento } from '../filtro';
 
 interface FetchOptions {
   userAgent: string;
@@ -73,7 +74,7 @@ export async function coletarAmazon(url: string): Promise<DadosBrutos[]> {
 
     const preco = normalizarPreco(precoRaw);
 
-    if (nomeRaw && preco > 0) {
+    if (nomeRaw && preco > 0 && isSuplemento(nomeRaw)) {
       resultados.push({
         nome: nomeRaw,
         marca,
@@ -93,9 +94,187 @@ export async function coletarAmazon(url: string): Promise<DadosBrutos[]> {
  * Tenta extrair o nome da marca do titulo do produto na Amazon
  */
 function extrairMarcaAmazon(titulo: string): string {
-  // Na Amazon BR, a marca costuma aparecer no inicio do titulo
-  // Ex: "Max Titanium Whey Protein 900g..."
   const partes = titulo.split(' ');
   const palavrasMarca = Math.min(3, Math.floor(partes.length * 0.3));
   return partes.slice(0, palavrasMarca).join(' ');
+}
+
+const TERMOS_SUPLEMENTO = [
+  'whey',
+  'protein',
+  'proteina',
+  'proteína',
+  'creatina',
+  'creatine',
+  'bcaa',
+  'glutamina',
+  'glutamine',
+  'beta alanina',
+  'beta-alanina',
+  'pre treino',
+  'pre-treino',
+  'pre workout',
+  'pre-workout',
+  'termogenico',
+  'termogênico',
+  'cafeina',
+  'cafeína',
+  'caffeine',
+  'vitamina',
+  'vitamin',
+  'omega 3',
+  'omega-3',
+  'omega3',
+  'colageno',
+  'colágeno',
+  'collagen',
+  'magnesio',
+  'magnésio',
+  'magnesium',
+  'zinco',
+  'zinc',
+  'probiotico',
+  'probiótico',
+  'probiotic',
+  'suplemento',
+  'suplement',
+  'coenzima',
+  'coenzyme',
+  'q10',
+  'resveratrol',
+  'curcumina',
+  'curcumin',
+  'cúrcuma',
+  'cla',
+  'l-carnitina',
+  'carnitina',
+  'carnitine',
+  'maltodextrina',
+  'maltodextrin',
+  'dextrose',
+  'palatinose',
+  'hipercalorico',
+  'hipercalórico',
+  'mass gainer',
+  'barra de proteina',
+  'barra proteica',
+  'protein bar',
+  'albumina',
+  'albumina',
+  'pasta de amendoim',
+  'integral',
+  'nitrato',
+  'nitric oxide',
+  'oxido nitrico',
+  'óxido nítrico',
+  'isolate',
+  'isolado',
+  'concentrado',
+  'concentrate',
+  'hidrolisado',
+  'hydrolyzed',
+  '3w',
+  '100%',
+  'top whey',
+  'femini',
+  'vegano',
+  'vegan',
+  'plant based',
+  'plant-based',
+];
+
+const TERMOS_BLOQUEADOS = [
+  'celular',
+  'smartphone',
+  'iphone',
+  'samsung galaxy',
+  'motorola',
+  'capa',
+  'pelicula',
+  'película',
+  'fone',
+  'headphone',
+  'earphone',
+  'carregador',
+  'cabo',
+  'adaptador',
+  'suporte veicular',
+  'notebook',
+  'laptop',
+  'tablet',
+  'smartwatch',
+  'relogio',
+  'relógio',
+  'tv',
+  'televisao',
+  'televisão',
+  'monitor',
+  'mouse',
+  'teclado',
+  'impressora',
+  'scanner',
+  'roteador',
+  'modem',
+  'webcam',
+  'caixa de som',
+  'soundbar',
+  'microfone',
+  'liquidificador',
+  'batedeira',
+  'cafeteira',
+  'aspirador',
+  'ventilador',
+  'climatizador',
+  'umidificador',
+  'camisa',
+  'camiseta',
+  'bermuda',
+  'calça',
+  'tenis',
+  'tênis',
+  'sapato',
+  'bone',
+  'boné',
+  'mochila',
+  'bolsa',
+  'carteira',
+  'perfume',
+  'colonia',
+  'colônia',
+  'maquiagem',
+  'batom',
+  'shampoo',
+  'brinquedo',
+  'boneco',
+  'jogo',
+  'video game',
+  'livro',
+  'ebook',
+  'kindle',
+  'revista',
+  'pilha',
+  'bateria',
+  'lampada',
+  'lâmpada',
+];
+
+function isSuplemento(nome: string): boolean {
+  const nomeLower = nome.toLowerCase();
+
+  for (const bloqueado of TERMOS_BLOQUEADOS) {
+    if (nomeLower.includes(bloqueado)) return false;
+  }
+
+  for (const termo of TERMOS_SUPLEMENTO) {
+    if (nomeLower.includes(termo)) return true;
+  }
+
+  const nomeSemAcento = nomeLower.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+
+  for (const termo of TERMOS_SUPLEMENTO) {
+    const termoSemAcento = termo.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    if (nomeSemAcento.includes(termoSemAcento)) return true;
+  }
+
+  return false;
 }
