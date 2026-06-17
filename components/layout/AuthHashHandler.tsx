@@ -1,25 +1,39 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { criarClienteNavegador } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
 
 export default function AuthHashHandler() {
   const router = useRouter();
+  const processado = useRef(false);
 
   useEffect(() => {
-    const hash = window.location.hash;
+    if (processado.current) return;
 
-    if (hash && hash.includes('access_token')) {
+    const hash = window.location.hash;
+    if (!hash) return;
+
+    const params = new URLSearchParams(hash.slice(1));
+    const accessToken = params.get('access_token');
+    const refreshToken = params.get('refresh_token');
+
+    if (accessToken) {
+      processado.current = true;
       const supabase = criarClienteNavegador();
 
-      supabase.auth.getSession().then(({ data }) => {
-        if (data.session) {
+      supabase.auth
+        .setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken ?? '',
+        })
+        .then(({ error }) => {
           window.history.replaceState(null, '', window.location.pathname);
-          router.push('/recomendacoes');
-          router.refresh();
-        }
-      });
+          if (!error) {
+            router.push('/recomendacoes');
+            router.refresh();
+          }
+        });
     }
   }, []);
 
