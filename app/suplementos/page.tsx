@@ -10,9 +10,9 @@ interface SuplementoDB {
   nome: string;
   marca: string;
   imagem_url: string | null;
-  preco_minimo: number | null;
-  certificacoes: string[] | null;
   categoria_id: number | null;
+  precos_suplementos: { preco: number }[] | null;
+  detalhes_suplementos: { certificacoes: string[] }[] | null;
 }
 
 interface Categoria {
@@ -54,7 +54,9 @@ async function CatalogoSuplementos({ busca, categoria }: { busca: string; catego
   const [{ data: suplementos, error }, { data: categorias }] = await Promise.all([
     supabase
       .from('suplementos')
-      .select('id, nome, marca, imagem_url, preco_minimo, certificacoes, categoria_id')
+      .select(
+        'id, nome, marca, imagem_url, categoria_id, precos_suplementos(preco), detalhes_suplementos(certificacoes)'
+      )
       .order('nome'),
     supabase.from('categorias_suplementos').select('id, nome').order('nome'),
   ]);
@@ -112,8 +114,8 @@ async function CatalogoSuplementos({ busca, categoria }: { busca: string; catego
               nome: s.nome,
               marca: s.marca,
               imagem_url: s.imagem_url || undefined,
-              preco_minimo: s.preco_minimo ?? undefined,
-              certificacoes: s.certificacoes || undefined,
+              preco_minimo: s.precos_suplementos?.[0]?.preco ?? undefined,
+              certificacoes: s.detalhes_suplementos?.[0]?.certificacoes || undefined,
             }}
           />
         ))}

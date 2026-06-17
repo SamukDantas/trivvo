@@ -8,29 +8,20 @@ import CardSuplemento from '@/components/suplementos/CardSuplemento';
 import { Suspense } from 'react';
 
 interface Recomendacao {
-  id: number;
-  suplemento: {
-    id: number;
-    nome: string;
-    marca: string;
-    imagem_url: string | null;
-    preco_minimo: number | null;
-    certificacoes: string[] | null;
-  };
+  suplemento_id: number;
+  nome: string;
+  marca: string;
   pontuacao: number;
-  motivo: string;
+  motivo: string | null;
 }
 
 function adaptarRecomendacao(rec: Recomendacao) {
   return {
-    id: rec.suplemento.id,
-    nome: rec.suplemento.nome,
-    marca: rec.suplemento.marca,
-    imagem_url: rec.suplemento.imagem_url || undefined,
-    preco_minimo: rec.suplemento.preco_minimo ?? undefined,
+    id: rec.suplemento_id,
+    nome: rec.nome,
+    marca: rec.marca,
     pontuacao: rec.pontuacao,
-    motivo: rec.motivo,
-    certificacoes: rec.suplemento.certificacoes || undefined,
+    motivo: rec.motivo || undefined,
   };
 }
 
@@ -71,7 +62,7 @@ async function BuscarRecomendacoes() {
   }
 
   const resposta = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL || 'https://trivvo-gamma.vercel.app'}/api/recomendacoes?usuario_id=${user.id}`, //localhost:3000'}/api/recomendacoes`,
+    `${process.env.NEXT_PUBLIC_SITE_URL || 'https://trivvo-gamma.vercel.app'}/api/recomendacoes?usuario_id=${user.id}`,
     { cache: 'no-store' }
   );
 
@@ -79,7 +70,13 @@ async function BuscarRecomendacoes() {
     return <EstadoErro mensagem="Não foi possível carregar suas recomendações no momento." />;
   }
 
-  const recomendacoes: Recomendacao[] = await resposta.json();
+  const data = await resposta.json();
+
+  if (data.erro) {
+    return <EstadoErro mensagem={data.erro} />;
+  }
+
+  const recomendacoes: Recomendacao[] = data.recomendacoes || [];
 
   if (!recomendacoes || recomendacoes.length === 0) {
     return (
