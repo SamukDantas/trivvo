@@ -1,6 +1,7 @@
 import * as cheerio from 'cheerio';
 import type { DadosBrutos } from '../tipos';
 import { normalizarPreco, userAgentAleatorio } from '../utils';
+import { isSuplemento } from '../filtro';
 
 function criarHeaders(): Record<string, string> {
   const ua = userAgentAleatorio();
@@ -78,7 +79,7 @@ export async function coletarMercadoLivre(url: string): Promise<DadosBrutos[]> {
 
     const preco = normalizarPreco(precoRaw);
 
-    if (nomeRaw && preco > 0) {
+    if (nomeRaw && preco > 0 && isSuplemento(nomeRaw)) {
       resultados.push({
         nome: nomeRaw,
         marca: extrairMarcaML(nomeRaw),
