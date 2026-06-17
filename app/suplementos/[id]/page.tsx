@@ -1,6 +1,7 @@
 import { criarClienteServidor } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import HistoricoPrecosReativo from '@/components/suplementos/HistoricoPrecosReativo';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -16,15 +17,11 @@ export default async function PaginaSuplemento({ params }: Props) {
     notFound();
   }
 
-  const [{ data: detalhes }, { data: precos }] = await Promise.all([
-    supabase.from('detalhes_suplementos').select('*').eq('suplemento_id', id).single(),
-    supabase
-      .from('precos_suplementos')
-      .select('*')
-      .eq('suplemento_id', id)
-      .order('data_coleta', { ascending: false })
-      .limit(5),
-  ]);
+  const { data: detalhes } = await supabase
+    .from('detalhes_suplementos')
+    .select('*')
+    .eq('suplemento_id', id)
+    .single();
 
   const ingredientes: string[] = detalhes?.ingredientes || [];
   const certificacoes: string[] = detalhes?.certificacoes || [];
@@ -67,12 +64,6 @@ export default async function PaginaSuplemento({ params }: Props) {
               {suplemento.marca}
             </span>
             <h1 className="mt-1 text-xl font-bold text-zinc-900">{suplemento.nome}</h1>
-
-            {precos && precos.length > 0 && (
-              <p className="mt-2 text-2xl font-bold text-emerald-600">
-                R$ {Number(precos[0].preco).toFixed(2).replace('.', ',')}
-              </p>
-            )}
 
             {detalhes && (
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-zinc-600">
@@ -126,31 +117,7 @@ export default async function PaginaSuplemento({ params }: Props) {
               </div>
             )}
 
-            {precos && precos.length > 0 && (
-              <div className="mt-6">
-                <h2 className="font-semibold text-zinc-900 mb-2">
-                  Histórico de preços (últimas {precos.length} coletas)
-                </h2>
-                <ul className="space-y-1.5 text-sm text-zinc-600">
-                  {precos.map(
-                    (p: { id: number; preco: number; data_coleta: string; loja_nome?: string }) => (
-                      <li
-                        key={p.id}
-                        className="flex items-center justify-between rounded-md bg-zinc-50 px-3 py-2"
-                      >
-                        <span>
-                          R$ {Number(p.preco).toFixed(2).replace('.', ',')}
-                          {p.loja_nome ? ` — ${p.loja_nome}` : ''}
-                        </span>
-                        <span className="text-zinc-400 text-xs">
-                          {new Date(p.data_coleta).toLocaleDateString('pt-BR')}
-                        </span>
-                      </li>
-                    )
-                  )}
-                </ul>
-              </div>
-            )}
+            <HistoricoPrecosReativo suplementoId={id} />
           </div>
         </div>
       </div>

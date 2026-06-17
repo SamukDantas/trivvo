@@ -1,8 +1,6 @@
 import { criarClienteServidor } from '@/lib/supabase/server';
 import EstadoCarregando from '@/components/comum/EstadoCarregando';
-import EstadoVazio from '@/components/comum/EstadoVazio';
-import EstadoErro from '@/components/comum/EstadoErro';
-import CardSuplemento from '@/components/suplementos/CardSuplemento';
+import CatalogoReativo from '@/components/suplementos/CatalogoReativo';
 import { Suspense } from 'react';
 
 interface SuplementoDB {
@@ -15,43 +13,14 @@ interface SuplementoDB {
   detalhes_suplementos: { certificacoes: string[] }[] | null;
 }
 
-interface Categoria {
-  id: number;
-  nome: string;
-}
-
 interface Props {
   searchParams: Promise<{ busca?: string; categoria?: string }>;
 }
 
-function filtrarSuplementos(
-  suplementos: SuplementoDB[],
-  busca: string,
-  categoria: string
-): SuplementoDB[] {
-  let resultado = suplementos;
-
-  if (busca) {
-    const termo = busca.toLowerCase();
-    resultado = resultado.filter(
-      (s) => s.nome.toLowerCase().includes(termo) || s.marca.toLowerCase().includes(termo)
-    );
-  }
-
-  if (categoria) {
-    const catId = parseInt(categoria, 10);
-    if (!isNaN(catId)) {
-      resultado = resultado.filter((s) => s.categoria_id === catId);
-    }
-  }
-
-  return resultado;
-}
-
-async function CatalogoSuplementos({ busca, categoria }: { busca: string; categoria: string }) {
+async function CatalogoInicial({ busca, categoria }: { busca: string; categoria: string }) {
   const supabase = await criarClienteServidor();
 
-  const [{ data: suplementos, error }, { data: categorias }] = await Promise.all([
+  const [{ data: suplementos }, { data: categorias }] = await Promise.all([
     supabase
       .from('suplementos')
       .select(
@@ -61,66 +30,13 @@ async function CatalogoSuplementos({ busca, categoria }: { busca: string; catego
     supabase.from('categorias_suplementos').select('id, nome').order('nome'),
   ]);
 
-  if (error) {
-    return <EstadoErro mensagem="Não foi possível carregar o catálogo de suplementos." />;
-  }
-
-  const resultado = filtrarSuplementos(suplementos || [], busca, categoria);
-
-  if (resultado.length === 0) {
-    return (
-      <EstadoVazio
-        titulo="Nenhum suplemento encontrado"
-        descricao="Tente ajustar sua busca ou limpar os filtros."
-      />
-    );
-  }
-
   return (
-    <>
-      {categorias && categorias.length > 0 && (
-        <div className="mb-6 flex flex-wrap items-center gap-2">
-          <span className="text-sm font-medium text-zinc-600">Filtrar por:</span>
-          {categorias.map((cat: Categoria) => (
-            <a
-              key={cat.id}
-              href={`/suplementos?categoria=${cat.id}`}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
-                categoria === String(cat.id)
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-zinc-100 text-zinc-600 hover:bg-zinc-200'
-              }`}
-            >
-              {cat.nome}
-            </a>
-          ))}
-          {categoria && (
-            <a
-              href="/suplementos"
-              className="rounded-full px-3 py-1 text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
-            >
-              Limpar filtro
-            </a>
-          )}
-        </div>
-      )}
-
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {resultado.map((s) => (
-          <CardSuplemento
-            key={s.id}
-            suplemento={{
-              id: s.id,
-              nome: s.nome,
-              marca: s.marca,
-              imagem_url: s.imagem_url || undefined,
-              preco_minimo: s.precos_suplementos?.[0]?.preco ?? undefined,
-              certificacoes: s.detalhes_suplementos?.[0]?.certificacoes || undefined,
-            }}
-          />
-        ))}
-      </div>
-    </>
+    <CatalogoReativo
+      suplementosIniciais={(suplementos as SuplementoDB[]) || []}
+      categorias={categorias || []}
+      buscaInicial={busca}
+      categoriaInicial={categoria}
+    />
   );
 }
 
@@ -148,7 +64,7 @@ export default async function PaginaSuplementos({ searchParams }: Props) {
         </form>
 
         <Suspense fallback={<EstadoCarregando />}>
-          <CatalogoSuplementos busca={busca} categoria={categoria} />
+          <CatalogoInicial busca={busca} categoria={categoria} />
         </Suspense>
       </div>
     </div>
