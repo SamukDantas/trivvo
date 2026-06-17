@@ -192,7 +192,7 @@ export default function CatalogoReativo({
           <button
             onClick={() => setPagina(paginaAtual - 1)}
             disabled={paginaAtual === 1}
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           >
             Anterior
           </button>
@@ -206,7 +206,7 @@ export default function CatalogoReativo({
               <button
                 key={p}
                 onClick={() => setPagina(p as number)}
-                className={`h-8 w-8 rounded-lg text-xs font-medium transition-colors ${
+                className={`h-8 w-8 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                   paginaAtual === p
                     ? 'bg-emerald-600 text-white'
                     : 'border border-zinc-200 text-zinc-600 hover:bg-zinc-50'
@@ -220,7 +220,7 @@ export default function CatalogoReativo({
           <button
             onClick={() => setPagina(paginaAtual + 1)}
             disabled={paginaAtual === totalPaginas}
-            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+            className="rounded-lg border border-zinc-300 px-3 py-1.5 text-xs font-medium text-zinc-600 hover:bg-zinc-50 transition-colors disabled:opacity-30 disabled:cursor-not-allowed cursor-pointer"
           >
             Próximo
           </button>
