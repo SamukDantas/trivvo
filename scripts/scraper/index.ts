@@ -9,6 +9,7 @@ import { normalizarDados } from './normalizador';
 import { coletarAmazon } from './extratores/amazon';
 import { coletarMercadoLivre } from './extratores/mercadolivre';
 import { coletarFabricante } from './extratores/fabricante';
+import { coletarShopify } from './extratores/shopify';
 import type { DadosBrutos, ResultadoColeta } from './tipos';
 
 // ============================================================
@@ -25,7 +26,8 @@ const EXTRATORES: Record<string, (url: string) => Promise<DadosBrutos[]>> = {
   amazon: coletarAmazon,
   mercadolivre: coletarMercadoLivre,
   fabricante: coletarFabricante,
-  loja_especializada: coletarFabricante, // fallback para o extrator generico
+  shopify: coletarShopify,
+  loja_especializada: coletarFabricante,
 };
 
 // ============================================================
