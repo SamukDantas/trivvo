@@ -26,8 +26,8 @@ export async function salvarPerfil(dados: DadosPerfil) {
   const { error } = await supabase
     .from('perfis')
     .update({
-      nome: dados.nome,
-      data_nascimento: dados.data_nascimento,
+      nome: dados.nome || null,
+      data_nascimento: dados.data_nascimento || null,
       objetivo: dados.objetivo,
       tipo_dieta: dados.tipo_dieta,
       restricoes: dados.restricoes,
