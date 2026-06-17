@@ -1,28 +1,36 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { criarClienteNavegador } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 export default function Cabecalho() {
   const [usuario, setUsuario] = useState<User | null>(null);
   const [menuAberto, setMenuAberto] = useState(false);
-  const supabase = criarClienteNavegador();
   const router = useRouter();
+  const pathname = usePathname();
+
+  const verificarSessao = useCallback(async () => {
+    const supabase = criarClienteNavegador();
+    const { data } = await supabase.auth.getSession();
+    setUsuario(data.session?.user ?? null);
+  }, []);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setUsuario(data.user ?? null));
+    verificarSessao();
 
+    const supabase = criarClienteNavegador();
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUsuario(session?.user ?? null);
     });
 
     return () => listener.subscription.unsubscribe();
-  }, []);
+  }, [pathname]);
 
   async function sair() {
+    const supabase = criarClienteNavegador();
     await supabase.auth.signOut();
     setMenuAberto(false);
     router.push('/');
