@@ -4,15 +4,37 @@ import { useEffect, useState, useCallback } from 'react';
 import { criarClienteNavegador } from '@/lib/supabase/client';
 import type { User } from '@supabase/supabase-js';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Cabecalho() {
   const [usuario, setUsuario] = useState<User | null>(null);
   const [menuAberto, setMenuAberto] = useState(false);
   const router = useRouter();
-  const pathname = usePathname();
 
   const verificarSessao = useCallback(async () => {
+    const hash = window.location.hash;
+
+    if (hash && hash.includes('access_token')) {
+      const params = new URLSearchParams(hash.slice(1));
+      const accessToken = params.get('access_token');
+      const refreshToken = params.get('refresh_token');
+
+      if (accessToken) {
+        const supabase = criarClienteNavegador();
+        const { error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken ?? '',
+        });
+
+        if (!error) {
+          window.history.replaceState(null, '', window.location.pathname);
+          const { data } = await supabase.auth.getSession();
+          setUsuario(data.session?.user ?? null);
+          return;
+        }
+      }
+    }
+
     const supabase = criarClienteNavegador();
     const { data } = await supabase.auth.getSession();
     setUsuario(data.session?.user ?? null);
@@ -27,7 +49,7 @@ export default function Cabecalho() {
     });
 
     return () => listener.subscription.unsubscribe();
-  }, [pathname]);
+  }, []);
 
   async function sair() {
     const supabase = criarClienteNavegador();
