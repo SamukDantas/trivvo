@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import Cabecalho from '@/components/layout/Cabecalho';
+import AuthHashHandler from '@/components/layout/AuthHashHandler';
 import './globals.css';
 
 const inter = Inter({
@@ -26,6 +27,7 @@ export default function LayoutRaiz({
   return (
     <html lang="pt-BR" className={`${inter.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
+        <AuthHashHandler />
         <Cabecalho />
         {children}
       </body>
