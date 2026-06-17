@@ -4,26 +4,8 @@ import Link from 'next/link';
 import EstadoCarregando from '@/components/comum/EstadoCarregando';
 import EstadoVazio from '@/components/comum/EstadoVazio';
 import EstadoErro from '@/components/comum/EstadoErro';
-import CardSuplemento from '@/components/suplementos/CardSuplemento';
+import RecomendacoesReativo from '@/components/suplementos/RecomendacoesReativo';
 import { Suspense } from 'react';
-
-interface Recomendacao {
-  suplemento_id: number;
-  nome: string;
-  marca: string;
-  pontuacao: number;
-  motivo: string | null;
-}
-
-function adaptarRecomendacao(rec: Recomendacao) {
-  return {
-    id: rec.suplemento_id,
-    nome: rec.nome,
-    marca: rec.marca,
-    pontuacao: rec.pontuacao,
-    motivo: rec.motivo || undefined,
-  };
-}
 
 async function BuscarRecomendacoes() {
   const supabase = await criarClienteServidor();
@@ -61,40 +43,7 @@ async function BuscarRecomendacoes() {
     );
   }
 
-  const resposta = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL || 'https://trivvo-gamma.vercel.app'}/api/recomendacoes?usuario_id=${user.id}`,
-    { cache: 'no-store' }
-  );
-
-  if (!resposta.ok) {
-    return <EstadoErro mensagem="Não foi possível carregar suas recomendações no momento." />;
-  }
-
-  const data = await resposta.json();
-
-  if (data.erro) {
-    return <EstadoErro mensagem={data.erro} />;
-  }
-
-  const recomendacoes: Recomendacao[] = data.recomendacoes || [];
-
-  if (!recomendacoes || recomendacoes.length === 0) {
-    return (
-      <EstadoVazio
-        titulo="Nenhuma recomendação disponível"
-        descricao="Ainda não temos recomendações para o seu perfil. Tente atualizar suas preferências."
-        acao={{ texto: 'Editar perfil', href: '/perfil/editar' }}
-      />
-    );
-  }
-
-  return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {recomendacoes.map((rec) => (
-        <CardSuplemento key={rec.suplemento_id} suplemento={adaptarRecomendacao(rec)} />
-      ))}
-    </div>
-  );
+  return <RecomendacoesReativo usuarioId={user.id} />;
 }
 
 export default function PaginaRecomendacoes() {
