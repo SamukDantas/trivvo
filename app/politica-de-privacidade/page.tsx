@@ -62,7 +62,7 @@ const SECOES = [
     titulo: 'Contato',
     conteudo: [
       'Para dúvidas, solicitações ou exercício dos direitos previstos na LGPD, entre em contato:',
-      'E-mail: privacidade@mvpsuplementos.com.br',
+      'E-mail: privacidade@trivvo.app',
       'Responsável pelo tratamento de dados (DPO): Samuel Dantas',
       'Atualizado pela última vez em: 17 de junho de 2026.',
     ],

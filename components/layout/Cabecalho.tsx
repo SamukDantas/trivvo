@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Cabecalho() {
   const [usuario, setUsuario] = useState<User | null>(null);
+  const [verificando, setVerificando] = useState(true);
   const [menuAberto, setMenuAberto] = useState(false);
   const router = useRouter();
 
@@ -39,6 +40,7 @@ export default function Cabecalho() {
     const supabase = criarClienteNavegador();
     const { data } = await supabase.auth.getSession();
     setUsuario(data.session?.user ?? null);
+    setVerificando(false);
   }, []);
 
   useEffect(() => {
@@ -47,6 +49,7 @@ export default function Cabecalho() {
     const supabase = criarClienteNavegador();
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUsuario(session?.user ?? null);
+      setVerificando(false);
     });
 
     return () => listener.subscription.unsubscribe();
@@ -148,14 +151,14 @@ export default function Cabecalho() {
               </>
             )}
           </div>
-        ) : (
+        ) : !verificando ? (
           <Link
             href="/login"
             className="rounded-full bg-emerald-600 px-5 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors"
           >
             Entrar
           </Link>
-        )}
+        ) : null}
       </div>
     </header>
   );
