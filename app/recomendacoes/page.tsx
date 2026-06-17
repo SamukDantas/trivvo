@@ -46,7 +46,7 @@ async function BuscarRecomendacoes() {
 
   const { data: perfil } = await supabase
     .from('perfis')
-    .select('id')
+    .select('id, objetivo')
     .eq('usuario_id', user.id)
     .single();
 
@@ -60,8 +60,18 @@ async function BuscarRecomendacoes() {
     );
   }
 
+  if (!perfil.objetivo) {
+    return (
+      <EstadoVazio
+        titulo="Perfil incompleto"
+        descricao="Complete seu perfil para receber recomendações baseadas no seu objetivo, dieta e orçamento."
+        acao={{ texto: 'Completar perfil', href: '/perfil/criar' }}
+      />
+    );
+  }
+
   const resposta = await fetch(
-    `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/recomendacoes`,
+    `${process.env.NEXT_PUBLIC_SITE_URL || 'https://trivvo-gamma.vercel.app'}/api/recomendacoes?usuario_id=${user.id}`, //localhost:3000'}/api/recomendacoes`,
     { cache: 'no-store' }
   );
 

@@ -30,6 +30,7 @@ export default function Cabecalho() {
           window.history.replaceState(null, '', window.location.pathname);
           const { data } = await supabase.auth.getSession();
           setUsuario(data.session?.user ?? null);
+          router.push('/perfil/criar');
           return;
         }
       }
