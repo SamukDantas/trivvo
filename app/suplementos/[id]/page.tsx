@@ -67,12 +67,12 @@ export default async function PaginaSuplemento({ params }: Props) {
 
             {detalhes && (
               <div className="mt-4 flex flex-wrap gap-4 text-sm text-zinc-600">
-                {detalhes.dose_porcao && (
+                {detalhes.dose_porcao && detalhes.dose_porcao !== '0' && (
                   <span>
                     <strong>Porção:</strong> {detalhes.dose_porcao}
                   </span>
                 )}
-                {detalhes.porcoes_por_embalagem && (
+                {detalhes.porcoes_por_embalagem > 0 && (
                   <span>
                     <strong>Doses:</strong> {detalhes.porcoes_por_embalagem}
                   </span>
