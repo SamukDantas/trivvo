@@ -21,7 +21,7 @@ jobs:
 
       - run: npm ci
 
-      - run: node --import tsx/esm scripts/scraper/index.ts
+      - run: npx tsx scripts/scraper/index.ts
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
