@@ -1,0 +1,39 @@
+name: Coleta de Suplementos
+
+on:
+  schedule:
+    # Executa diariamente as 06:00 UTC (03:00 BRT) para coleta leve
+    - cron: '0 6 * * *'
+    # Executa segunda-feira para coleta mais abrangente
+    # (permite aumentar MAX_PRODUTOS no futuro sem risco de bloqueio)
+    - cron: '0 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      fonte_id:
+        description: 'ID da fonte especifica para executar (vazio = todas)'
+        required: false
+        type: string
+
+jobs:
+  scraper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout do repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Executar scraper
+        run: npx tsx scripts/scraper/index.ts
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
